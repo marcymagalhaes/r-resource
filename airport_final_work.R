@@ -410,14 +410,79 @@ ggplot(UA_AIRPLANE, aes(x = model, y =year, color = manufacturer, label = seats)
 # esboço do documento
 
 
+install.packages('dplyr')
+library(dplyr)
+
+# transformar variáveis em numéricas
+
+str(nyc_weather2); summary(nyc_weather)
+
+# transformando a variável month em factor
+nyc_weather2 <- nyc_weather %>% transform(month = as.factor(month))
+
+# renomeando os fatores mês
+levels(nyc_weather2$month) <- c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
+levels(nyc_weather2$month)
+View (nyc_weather2)
 
 
+nyc_weather2$precip <- as.numeric(nyc_weather2$precip)
+nyc_weather2$visib <- as.numeric(nyc_weather2$visib)
+
+#média global precipitação
+nyc_weather2 %>% summarise(average_precip = mean(precip))
+nyc_weather2 %>% summarise(average_precip = mean(visib))
+
+# média de precipitação por mês
+
+nyc_weather2 %>% group_by(origin, month) %>% summarise(average_precip_month = mean(precip), average_visib_month = mean(visib)) -> nyc_weather4
+View(nyc_weather4)
+
+nyc_weather4 %>% filter(origin == 'EWR') -> nyc_weather5
+View(nyc_weather5)
 
 
+# Gráficos Precipitação por Aeroporto
+ggplot(nyc_weather5, aes(month, average_precip_month, group = 1)) +  geom_line(color = 'dodgerblue', lwd = 1.1) +
+    labs(x="Mês",
+       y = "Precipitação Média ",
+       title = "Precipitação Média por Mês - Newark Liberty Airport")
 
 
+nyc_weather4 %>% filter(origin == 'JFK') -> nyc_weather6
+View(nyc_weather6)
+
+ggplot(nyc_weather6, aes(month, average_precip_month, group = 1)) +  geom_line(color = 'dodgerblue', lwd = 1.1) +
+  labs(x="Mês",
+       y = "Precipitação Média ",
+       title = "Precipitação Média por Mês - John F Kennedy Airport")
 
 
+nyc_weather4 %>% filter(origin == 'LGA') -> nyc_weather7
+View(nyc_weather7)
+
+ggplot(nyc_weather7, aes(month, average_precip_month, group = 1)) +  geom_line(color = 'dodgerblue', lwd = 1.1) +
+  labs(x="Mês",
+       y = "Precipitação Média ",
+       title = "Precipitação Média por Mês - La Guardia Airport")
+
+# Gráficos Visibilidade por Aeroporto
+
+ggplot(nyc_weather5, aes(month, average_visib_month, group = 1)) +  geom_line(color = 'dodgerblue', lwd = 1.1) +
+  labs(x="Mês",
+       y = "Visibilidade Média ",
+       title = "Visibilidade Média por Mês - Newark Liberty Airport")
+
+ggplot(nyc_weather6, aes(month, average_visib_month, group = 1)) +  geom_line(color = 'dodgerblue', lwd = 1.1) +
+  labs(x="Mês",
+       y = "Visibilidade Médi ",
+       title = "Visibilidade Média por Mês - John F Kennedy Airport")
+
+
+ggplot(nyc_weather7, aes(month, average_precip_month, group = 1)) +  geom_line(color = 'dodgerblue', lwd = 1.1) +
+  labs(x="Mês",
+       y = "Visibilidade Média ",
+       title = "Visibilidade Médi por Mês - La Guardia Airport")
 
 # ====FIM - MARCIA==================================================================================
 
